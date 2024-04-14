@@ -1,6 +1,5 @@
-package com.meltwater.acr.google;
+package se.lindhen.acr.google;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -11,9 +10,8 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.CalendarScopes;
-import com.meltwater.acr.AggressiveCalendarReminder;
-import com.meltwater.acr.Settings;
-import com.meltwater.acr.ui.settings.ClientSecretFrame;
+import se.lindhen.acr.AggressiveCalendarReminder;
+import se.lindhen.acr.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +30,8 @@ public class Authorization {
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
     private final Credential credential;
     private static final Logger log = LoggerFactory.getLogger(Authorization.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private final Settings settings;
 
     public Authorization(Settings settings, NetHttpTransport httpTransport) throws IOException {
-        this.settings = settings;
         InputStream credentialsFile = AggressiveCalendarReminder.class.getResourceAsStream("/credentials.json");
         // Load client secrets.
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(credentialsFile));

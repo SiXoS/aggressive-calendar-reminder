@@ -1,7 +1,7 @@
-package com.meltwater.acr.ui.settings;
+package se.lindhen.acr.ui.settings;
 
-import com.meltwater.acr.Settings;
-import com.meltwater.acr.ui.ScreenSelector;
+import se.lindhen.acr.Settings;
+import se.lindhen.acr.ui.ScreenSelector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;

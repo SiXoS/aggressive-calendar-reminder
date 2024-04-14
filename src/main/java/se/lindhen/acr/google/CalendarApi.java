@@ -1,6 +1,5 @@
-package com.meltwater.acr.google;
+package se.lindhen.acr.google;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -11,8 +10,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
-import com.meltwater.acr.AggressiveCalendarReminder;
-import com.meltwater.acr.Settings;
+import se.lindhen.acr.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +20,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class CalendarApi {
 

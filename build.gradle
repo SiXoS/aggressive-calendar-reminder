@@ -10,10 +10,10 @@ java {
     }
 }
 
-group 'com.meltwater'
+group 'se.lindhen'
 version '1.0-SNAPSHOT'
 
-def mainClassName = 'com.meltwater.acr.AggressiveCalendarReminder'
+def mainClassName = 'se.lindhen.acr.AggressiveCalendarReminder'
 
 application {
     mainClass = mainClassName

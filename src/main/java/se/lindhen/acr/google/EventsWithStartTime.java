@@ -1,4 +1,4 @@
-package com.meltwater.acr.google;
+package se.lindhen.acr.google;
 
 import com.google.api.services.calendar.model.Event;
 import org.jetbrains.annotations.NotNull;

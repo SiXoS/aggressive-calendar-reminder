@@ -4,7 +4,11 @@ set -e
 
 function get_java_17_or_more() {
   # Check if java is in PATH
-  if which java >/dev/null 2>&1; then
+  SDKMAN_JAVA_DIR="$HOME/.sdkman/candidates/java"
+  if [[ -n "$SDKMAN_JAVA_DIR" ]]; then
+    version=$(ls -w 1 "$SDKMAN_JAVA_DIR" | grep -E '^(1[7-9]|2)' | sort -r | head -n 1)
+    java_executable="$SDKMAN_JAVA_DIR/$version/bin/java"
+  elif which java >/dev/null 2>&1; then
     java_executable="java"
   else
     # Check if JAVA_HOME is set and java exists within (handle symlinks)
@@ -28,4 +32,4 @@ function get_java_17_or_more() {
   return 1
 }
 
-$(get_java_17_or_more) -jar /etc/aggressive-calendar-reminder/aggressive-calendar-reminder.jar >> /var/log/acr
+exec "$(get_java_17_or_more)" "-jar" "/etc/aggressive-calendar-reminder/aggressive-calendar-reminder.jar" >> /var/log/acr

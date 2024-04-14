@@ -1,9 +1,8 @@
-package com.meltwater.acr;
+package se.lindhen.acr;
 
-import com.meltwater.acr.google.CalendarApi;
-import com.meltwater.acr.ui.settings.ClientSecretFrame;
-import com.meltwater.acr.ui.settings.ScreenSelectorPanel;
-import com.meltwater.acr.ui.systemtray.SystemTrayMenu;
+import se.lindhen.acr.google.CalendarApi;
+import se.lindhen.acr.ui.settings.ClientSecretFrame;
+import se.lindhen.acr.ui.systemtray.SystemTrayMenu;
 import dorkbox.systemTray.SystemTray;
 
 import javax.swing.UIManager;

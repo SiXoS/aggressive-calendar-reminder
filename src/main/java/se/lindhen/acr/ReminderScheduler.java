@@ -1,10 +1,10 @@
-package com.meltwater.acr;
+package se.lindhen.acr;
 
 import com.google.api.services.calendar.model.Event;
-import com.meltwater.acr.google.CalendarApi;
-import com.meltwater.acr.google.EventsWithStartTime;
-import com.meltwater.acr.ui.ScreenSelector;
-import com.meltwater.acr.ui.reminder.ReminderFrame;
+import se.lindhen.acr.google.CalendarApi;
+import se.lindhen.acr.google.EventsWithStartTime;
+import se.lindhen.acr.ui.ScreenSelector;
+import se.lindhen.acr.ui.reminder.ReminderFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

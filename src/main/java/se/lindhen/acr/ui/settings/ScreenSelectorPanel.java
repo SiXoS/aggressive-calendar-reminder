@@ -1,12 +1,11 @@
-package com.meltwater.acr.ui.settings;
+package se.lindhen.acr.ui.settings;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
-import com.meltwater.acr.ReminderScheduler;
-import com.meltwater.acr.Settings;
-import com.meltwater.acr.ui.ScreenSelector;
-import com.meltwater.acr.ui.reminder.ReminderFrame;
+import se.lindhen.acr.ReminderScheduler;
+import se.lindhen.acr.Settings;
+import se.lindhen.acr.ui.ScreenSelector;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JButton;

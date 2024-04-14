@@ -1,4 +1,4 @@
-package com.meltwater.acr.ui.reminder;
+package se.lindhen.acr.ui.reminder;
 
 import com.google.api.services.calendar.model.Event;
 
