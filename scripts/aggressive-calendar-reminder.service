@@ -1,0 +1,13 @@
+[Unit]
+Description=Aggressive Calendar Reminder
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=exec
+WorkingDirectory=/etc/aggressive-calendar-reminder
+ExecStart=/bin/bash -c "/etc/aggressive-calendar-reminder/acr"
+Restart=no
+
+[Install]
+WantedBy=graphical-session.target

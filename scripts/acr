@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+function get_java_17_or_more() {
+  # Check if java is in PATH
+  if which java >/dev/null 2>&1; then
+    java_executable="java"
+  else
+    # Check if JAVA_HOME is set and java exists within (handle symlinks)
+    if [[ -n "$JAVA_HOME" && -x "$(realpath "$JAVA_HOME/bin/java")" ]]; then
+      java_executable="$(realpath "$JAVA_HOME/bin/java")"
+    fi
+  fi
+
+  # Check if java is found and has version 17 or more
+  if [[ -n "$java_executable" ]]; then
+    version=$("$java_executable" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+    major_version=${version%%.*}
+    if [[ $major_version -ge 17 ]]; then
+      echo "$java_executable"
+      return 0
+    fi
+  fi
+
+  # Java not found or not compatible version
+  echo "Java 17 or higher not found." 1>&2
+  return 1
+}
+
+$(get_java_17_or_more) -jar /etc/aggressive-calendar-reminder/aggressive-calendar-reminder.jar >> /var/log/acr
