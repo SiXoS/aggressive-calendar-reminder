@@ -1,3 +1,7 @@
+## Requirements
+
+Java 17+
+
 ## Installation
 
 Ask author to add your email to the allow-list.
