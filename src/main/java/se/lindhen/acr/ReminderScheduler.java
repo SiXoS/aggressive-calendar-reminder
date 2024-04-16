@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -27,19 +28,24 @@ public class ReminderScheduler {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private TreeMap<ZonedDateTime, EventsWithStartTime> nextEvents;
     private EventsWithStartTime nextScheduledReminder;
+    private ScheduledFuture<?> nextScheduledFuture;
+
     private final CalendarApi calendarApi;
     private static final Logger log = LoggerFactory.getLogger(ReminderScheduler.class);
-
     private final int calendarRefreshRateMinutes;
-    private final int minutesBeforeMeetingToRemind;
     private final Settings settings;
 
-    public ReminderScheduler(CalendarApi calendarApi, int calendarRefreshRateMinutes, int minutesBeforeMeetingToRemind, Settings settings) {
+    public ReminderScheduler(CalendarApi calendarApi, int calendarRefreshRateMinutes, Settings settings) {
         this.calendarApi = calendarApi;
         this.calendarRefreshRateMinutes = calendarRefreshRateMinutes;
-        this.minutesBeforeMeetingToRemind = minutesBeforeMeetingToRemind;
         this.settings = settings;
+        settings.setMinutesBeforeToRemindChangeListener(this::handleMinutesBeforeToRemindChanged);
         executorService.scheduleAtFixedRate(new CalendarUpdateTask(), 0, calendarRefreshRateMinutes, TimeUnit.MINUTES);
+    }
+
+    private void handleMinutesBeforeToRemindChanged(int minutes) {
+        nextScheduledFuture.cancel(false);
+        scheduleReminder();
     }
 
     public void updateForNextEvents(TreeMap<ZonedDateTime, EventsWithStartTime> nextEvents) {
@@ -51,9 +57,9 @@ public class ReminderScheduler {
     public void scheduleReminder() {
         if (nextScheduledReminder == null) return;
         if (nextScheduledReminder.start().minusMinutes(calendarRefreshRateMinutes).isBefore(ZonedDateTime.now()) && nextScheduledReminder.start().isAfter(ZonedDateTime.now())) {
-            long secondsUntilReminder = Duration.between(ZonedDateTime.now(), nextScheduledReminder.start().minusMinutes(minutesBeforeMeetingToRemind)).toSeconds();
+            long secondsUntilReminder = Duration.between(ZonedDateTime.now(), nextScheduledReminder.start().minusMinutes(settings.getMinutesBeforeToRemind())).toSeconds();
             log.info("Scheduling " + nextScheduledReminder.events().size() + " events in " + secondsUntilReminder + " seconds");
-            executorService.schedule(new ReminderTask(nextScheduledReminder), secondsUntilReminder, TimeUnit.SECONDS);
+            nextScheduledFuture = executorService.schedule(new ReminderTask(nextScheduledReminder), secondsUntilReminder, TimeUnit.SECONDS);
         }
     }
 

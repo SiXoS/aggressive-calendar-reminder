@@ -29,3 +29,13 @@ systemctl --user daemon-reload
 systemctl --user enable aggressive-calendar-reminder.service
 systemctl --user start aggressive-calendar-reminder.service
 ```
+
+## Update
+
+```bash
+cd /etc/aggressive-calendar-reminder
+latest=$(curl --silent "https://api.github.com/repos/SiXoS/aggressive-calendar-reminder/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+systemctl --user stop aggressive-calendar-reminder.service
+wget -q https://github.com/SiXoS/aggressive-calendar-reminder/releases/download/$latest/aggressive-calendar-reminder.jar -O aggressive-calendar-reminder.jar
+systemctl --user start aggressive-calendar-reminder.service
+```

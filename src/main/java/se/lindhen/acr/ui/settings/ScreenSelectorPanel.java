@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -25,7 +27,7 @@ public class ScreenSelectorPanel extends JPanel {
     private final Settings settings;
 
     public ScreenSelectorPanel(Settings settings) {
-        super();
+        super(new FlowLayout(FlowLayout.LEFT));
 
         this.settings = settings;
 

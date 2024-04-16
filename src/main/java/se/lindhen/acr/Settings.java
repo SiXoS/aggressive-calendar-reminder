@@ -9,14 +9,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 public class Settings {
 
     private final File settingsFile;
     private final static ScreenSelector.Screen DEFAULT_SCREEN = ScreenSelector.Screen.allScreens();
+    private final static Logger log = LoggerFactory.getLogger(Settings.class);
+    private IntConsumer minutesBeforeToRemindChangeListener = null;
+
+    // settings
     private ScreenSelector.Screen screen = null;
     private String clientSecret;
-    private Logger log = LoggerFactory.getLogger(Settings.class);
+    private Integer minutesBeforeToRemind = null;
+
 
     public Settings(File settingsFile) throws IOException {
         this.settingsFile = settingsFile;
@@ -28,12 +35,20 @@ public class Settings {
         parseSettings();
     }
 
+    public void setMinutesBeforeToRemindChangeListener(IntConsumer listener) {
+        minutesBeforeToRemindChangeListener = listener;
+    }
+
     public ScreenSelector.Screen getScreen() {
         return screen == null ? DEFAULT_SCREEN : screen;
     }
 
     public String getClientSecret() {
         return clientSecret;
+    }
+
+    public Integer getMinutesBeforeToRemind() {
+        return minutesBeforeToRemind;
     }
 
     public boolean updateScreen(ScreenSelector.Screen screen) {
@@ -43,6 +58,14 @@ public class Settings {
 
     public boolean updateClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+        return writeSettings();
+    }
+
+    public boolean updateMinutesBeforeToRemind(int minutesBeforeToRemind) {
+        this.minutesBeforeToRemind = minutesBeforeToRemind;
+        if (minutesBeforeToRemindChangeListener != null) {
+            minutesBeforeToRemindChangeListener.accept(minutesBeforeToRemind);
+        }
         return writeSettings();
     }
 
@@ -67,6 +90,7 @@ public class Settings {
         switch (setting) {
             case SCREEN -> screen = ScreenSelector.Screen.deserialize(line);
             case CLIENT_SECRET -> clientSecret = line;
+            case MINUTES_BEFORE_TO_REMIND -> minutesBeforeToRemind = Integer.valueOf(line);
         }
     }
 
@@ -79,6 +103,10 @@ public class Settings {
             if (clientSecret != null) {
                 printWriter.println(Setting.CLIENT_SECRET.name());
                 printWriter.println(validateSerialization(clientSecret));
+            }
+            if (minutesBeforeToRemind != null) {
+                printWriter.println(Setting.MINUTES_BEFORE_TO_REMIND.name());
+                printWriter.println(validateSerialization(minutesBeforeToRemind.toString()));
             }
             return true;
         } catch (Exception e) {
@@ -95,6 +123,6 @@ public class Settings {
     }
 
     private enum Setting {
-        CLIENT_SECRET, SCREEN
+        CLIENT_SECRET, SCREEN, MINUTES_BEFORE_TO_REMIND
     }
 }

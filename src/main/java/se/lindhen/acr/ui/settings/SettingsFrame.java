@@ -22,6 +22,7 @@ public class SettingsFrame extends JFrame {
         inner.setLayout(new BoxLayout(inner, BoxLayout.Y_AXIS));
 
         inner.add(new ScreenSelectorPanel(settings));
+        inner.add(new MinuteSelectorPanel(settings));
 
         JLabel noSaveNeeded = new JLabel("Settings are saved on change");
         noSaveNeeded.setBorder(new EmptyBorder(3, 3, 3, 3));

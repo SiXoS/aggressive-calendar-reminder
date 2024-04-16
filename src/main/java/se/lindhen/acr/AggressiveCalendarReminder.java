@@ -65,7 +65,7 @@ public class AggressiveCalendarReminder {
 
     private static ReminderScheduler startReminderServices(Settings settings) throws GeneralSecurityException, IOException {
         CalendarApi calendarApi = new CalendarApi(settings);
-        return new ReminderScheduler(calendarApi, 30, 1, settings);
+        return new ReminderScheduler(calendarApi, 30, settings);
     }
 
 
