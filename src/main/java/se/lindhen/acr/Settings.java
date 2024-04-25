@@ -90,7 +90,13 @@ public class Settings {
         switch (setting) {
             case SCREEN -> screen = ScreenSelector.Screen.deserialize(line);
             case CLIENT_SECRET -> clientSecret = line;
-            case MINUTES_BEFORE_TO_REMIND -> minutesBeforeToRemind = Integer.valueOf(line);
+            case MINUTES_BEFORE_TO_REMIND -> {
+                try {
+                    minutesBeforeToRemind = Integer.valueOf(line);
+                } catch (NumberFormatException e) {
+                    minutesBeforeToRemind = null;
+                }
+            }
         }
     }
 
