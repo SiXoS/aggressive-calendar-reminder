@@ -28,7 +28,10 @@ public class ReminderFrame extends JFrame implements WindowListener {
         for (Event event : events) {
             JPanel jPanel = new JPanel();
             jPanel.setBorder(new EmptyBorder(0, 0, 5, 0));
-            jPanel.add(new EventFrame(event));
+            jPanel.add(new EventFrame(event, () -> {
+                closeListener.accept(this);
+                dispose();
+            }));
             inner.add(jPanel);
         }
 

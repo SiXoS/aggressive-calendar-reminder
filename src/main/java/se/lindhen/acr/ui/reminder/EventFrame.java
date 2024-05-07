@@ -1,6 +1,9 @@
 package se.lindhen.acr.ui.reminder;
 
 import com.google.api.services.calendar.model.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.lindhen.acr.google.CalendarApi;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,8 +29,11 @@ import java.util.Locale;
 
 public class EventFrame extends JPanel {
 
-    public EventFrame(Event event) {
+    private final Runnable onLinkClickedListener;
+
+    public EventFrame(Event event, Runnable onLinkClickedListener) {
         super();
+        this.onLinkClickedListener = onLinkClickedListener;
 
         GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
@@ -84,6 +90,9 @@ public class EventFrame extends JPanel {
         public void mouseClicked(MouseEvent e) {
             try {
                 Desktop.getDesktop().browse(new URI(link));
+                if (onLinkClickedListener != null) {
+                    onLinkClickedListener.run();
+                }
             } catch (IOException | URISyntaxException exception) {
                 JOptionPane.showMessageDialog(EventFrame.this, "Unable to open link '" + link + "': " + exception.getMessage(), "Failed to open link", JOptionPane.ERROR_MESSAGE);
             }
