@@ -4,21 +4,29 @@ import com.google.api.services.calendar.model.Event;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GraphicsDevice;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ReminderFrame extends JFrame implements WindowListener {
+public class ReminderFrame extends JFrame implements WindowListener, MouseListener {
 
     private final Consumer<ReminderFrame> closeListener;
+    private final Runnable reauthenticate;
 
-    public ReminderFrame(List<Event> events, GraphicsDevice screen, Consumer<ReminderFrame> closeListener) {
+    public ReminderFrame(List<Event> events, GraphicsDevice screen, Consumer<ReminderFrame> closeListener, Runnable reauthenticate) {
         super("Aggressive Calendar Reminder");
         this.closeListener = closeListener;
+        this.reauthenticate = reauthenticate;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         JPanel inner = new JPanel();
@@ -34,6 +42,17 @@ public class ReminderFrame extends JFrame implements WindowListener {
             }));
             inner.add(jPanel);
         }
+        if (this.reauthenticate != null) {
+            JLabel meetLabel = new JLabel("Token is expiring. Reauthenticate.");
+            meetLabel.setPreferredSize(new Dimension(280, 35));
+            meetLabel.setBorder(new EmptyBorder(3, 3, 3, 3));
+            inner.add(meetLabel);
+            meetLabel.setForeground(Color.CYAN.darker());
+            meetLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            meetLabel.addMouseListener(this);
+        }
+        JPanel jPanel = new JPanel();
+        jPanel.setBorder(new EmptyBorder(0, 0, 5, 0));
 
         addWindowListener(this);
 
@@ -86,6 +105,33 @@ public class ReminderFrame extends JFrame implements WindowListener {
 
     @Override
     public void windowDeactivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (this.reauthenticate != null) {
+            this.reauthenticate.run();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }

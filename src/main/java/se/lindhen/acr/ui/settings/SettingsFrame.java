@@ -1,5 +1,6 @@
 package se.lindhen.acr.ui.settings;
 
+import se.lindhen.acr.ApplicationActions;
 import se.lindhen.acr.Settings;
 import se.lindhen.acr.ui.ScreenSelector;
 
@@ -13,7 +14,7 @@ import java.awt.GraphicsDevice;
 
 public class SettingsFrame extends JFrame {
 
-    public SettingsFrame(Settings settings) {
+    public SettingsFrame(ApplicationActions applicationActions) {
         super("Aggressive Calendar Reminder | Settings");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -21,8 +22,8 @@ public class SettingsFrame extends JFrame {
         inner.setBorder(new EmptyBorder(10, 10, 5, 10));
         inner.setLayout(new BoxLayout(inner, BoxLayout.Y_AXIS));
 
-        inner.add(new ScreenSelectorPanel(settings));
-        inner.add(new MinuteSelectorPanel(settings));
+        inner.add(new ScreenSelectorPanel(applicationActions));
+        inner.add(new MinuteSelectorPanel(applicationActions.getSettings()));
 
         JLabel noSaveNeeded = new JLabel("Settings are saved on change");
         noSaveNeeded.setBorder(new EmptyBorder(3, 3, 3, 3));

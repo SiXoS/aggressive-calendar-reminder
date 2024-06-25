@@ -1,19 +1,13 @@
 package se.lindhen.acr;
 
-import com.google.api.services.calendar.model.Event;
 import se.lindhen.acr.google.CalendarApi;
 import se.lindhen.acr.google.EventsWithStartTime;
-import se.lindhen.acr.ui.ScreenSelector;
-import se.lindhen.acr.ui.reminder.ReminderFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.GraphicsDevice;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -21,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class ReminderScheduler {
 
@@ -33,13 +26,13 @@ public class ReminderScheduler {
     private final CalendarApi calendarApi;
     private static final Logger log = LoggerFactory.getLogger(ReminderScheduler.class);
     private final int calendarRefreshRateMinutes;
-    private final Settings settings;
+    private final ApplicationActions applicationActions;
 
-    public ReminderScheduler(CalendarApi calendarApi, int calendarRefreshRateMinutes, Settings settings) {
+    public ReminderScheduler(CalendarApi calendarApi, int calendarRefreshRateMinutes, ApplicationActions applicationActions) {
         this.calendarApi = calendarApi;
         this.calendarRefreshRateMinutes = calendarRefreshRateMinutes;
-        this.settings = settings;
-        settings.setMinutesBeforeToRemindChangeListener(this::handleMinutesBeforeToRemindChanged);
+        this.applicationActions = applicationActions;
+        applicationActions.getSettings().setMinutesBeforeToRemindChangeListener(this::handleMinutesBeforeToRemindChanged);
         executorService.scheduleAtFixedRate(new CalendarUpdateTask(), 0, calendarRefreshRateMinutes, TimeUnit.MINUTES);
     }
 
@@ -57,7 +50,7 @@ public class ReminderScheduler {
     public void scheduleReminder() {
         if (nextScheduledReminder == null) return;
         if (nextScheduledReminder.start().minusMinutes(calendarRefreshRateMinutes).isBefore(ZonedDateTime.now()) && nextScheduledReminder.start().isAfter(ZonedDateTime.now())) {
-            long secondsUntilReminder = Duration.between(ZonedDateTime.now(), nextScheduledReminder.start().minusMinutes(settings.getMinutesBeforeToRemind())).toSeconds();
+            long secondsUntilReminder = Duration.between(ZonedDateTime.now(), nextScheduledReminder.start().minusMinutes(applicationActions.getSettings().getMinutesBeforeToRemind())).toSeconds();
             log.info("Scheduling " + nextScheduledReminder.events().size() + " events in " + secondsUntilReminder + " seconds");
             nextScheduledFuture = executorService.schedule(new ReminderTask(nextScheduledReminder), secondsUntilReminder, TimeUnit.SECONDS);
         }
@@ -87,21 +80,6 @@ public class ReminderScheduler {
         }
     }
 
-    public static void showReminder(List<Event> events, ScreenSelector.Screen settingsScreen) {
-        List<GraphicsDevice> screens = ScreenSelector.getScreen(settingsScreen);
-        List<ReminderFrame> currentFrames = new ArrayList<>();
-        Consumer<ReminderFrame> onClose = frame -> {
-            for (ReminderFrame reminderFrame : currentFrames) {
-                if (reminderFrame != frame) {
-                    reminderFrame.dispose();
-                }
-            }
-        };
-        for (GraphicsDevice screen : screens) {
-            currentFrames.add(new ReminderFrame(events, screen, onClose));
-        }
-    }
-
     private class ReminderTask implements Runnable {
 
         private final EventsWithStartTime toRemindOf;
@@ -115,7 +93,7 @@ public class ReminderScheduler {
             try {
                 if (Objects.equals(toRemindOf, nextScheduledReminder)) {
                     if (eventIsUpToDate(toRemindOf)) {
-                        showReminder(toRemindOf.events(), settings.getScreen());
+                        applicationActions.showReminder(toRemindOf.events(), calendarApi);
                         nextEvents.remove(toRemindOf.start());
                         Map.Entry<ZonedDateTime, EventsWithStartTime> nextItemToSchedule = nextEvents.firstEntry();
                         if (nextItemToSchedule != null) {

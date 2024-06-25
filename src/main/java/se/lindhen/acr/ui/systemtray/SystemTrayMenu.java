@@ -1,6 +1,7 @@
 package se.lindhen.acr.ui.systemtray;
 
 import se.lindhen.acr.AggressiveCalendarReminder;
+import se.lindhen.acr.ApplicationActions;
 import se.lindhen.acr.Settings;
 import se.lindhen.acr.ui.settings.SettingsFrame;
 
@@ -15,13 +16,13 @@ public class SystemTrayMenu extends JMenu {
 
     private Runnable refreshListener;
 
-    public SystemTrayMenu(Settings settings) {
+    public SystemTrayMenu(ApplicationActions applicationActions) {
 
         JMenuItem refresh = new JMenuItem("Refresh calendar");
         refresh.addActionListener(event -> invokeRefreshListener());
 
         JMenuItem settingsItem = new JMenuItem("Settings");
-        settingsItem.addActionListener(event -> new SettingsFrame(settings));
+        settingsItem.addActionListener(event -> new SettingsFrame(applicationActions));
 
         JMenuItem quit = new JMenuItem("Quit");
         quit.addActionListener(event -> System.exit(0));
