@@ -16,6 +16,7 @@ public class Settings {
 
     private final File settingsFile;
     private final static ScreenSelector.Screen DEFAULT_SCREEN = ScreenSelector.Screen.allScreens();
+    private final static int DEFAULT_MINUTES_BEFORE_TO_REMIND = 1;
     private final static Logger log = LoggerFactory.getLogger(Settings.class);
     private IntConsumer minutesBeforeToRemindChangeListener = null;
 
@@ -48,7 +49,7 @@ public class Settings {
     }
 
     public Integer getMinutesBeforeToRemind() {
-        return minutesBeforeToRemind;
+        return minutesBeforeToRemind == null ? DEFAULT_MINUTES_BEFORE_TO_REMIND : minutesBeforeToRemind;
     }
 
     public boolean updateScreen(ScreenSelector.Screen screen) {

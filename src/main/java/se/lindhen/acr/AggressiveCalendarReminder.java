@@ -33,8 +33,9 @@ public class AggressiveCalendarReminder {
     }
 
     private static void start(Settings settings) throws IOException, GeneralSecurityException {
-        SystemTrayMenu systemTray = createSystemTray(settings);
-        ReminderScheduler reminderScheduler = startReminderServices(settings);
+        ApplicationActions applicationActions = new ApplicationActions(settings);
+        SystemTrayMenu systemTray = createSystemTray(applicationActions);
+        ReminderScheduler reminderScheduler = startReminderServices(applicationActions);
         systemTray.setRefreshListener(reminderScheduler::updateNow);
     }
 
@@ -55,17 +56,17 @@ public class AggressiveCalendarReminder {
         return new Settings(settingsFile);
     }
 
-    private static SystemTrayMenu createSystemTray(Settings settings) throws IOException {
-        SystemTrayMenu systemTrayMenu = new SystemTrayMenu(settings);
+    private static SystemTrayMenu createSystemTray(ApplicationActions applicationActions) throws IOException {
+        SystemTrayMenu systemTrayMenu = new SystemTrayMenu(applicationActions);
         SystemTray systemTray = SystemTray.get();
         systemTray.setMenu(systemTrayMenu);
         systemTray.setImage(SystemTrayMenu.createImage("/calendar.png"));
         return systemTrayMenu;
     }
 
-    private static ReminderScheduler startReminderServices(Settings settings) throws GeneralSecurityException, IOException {
-        CalendarApi calendarApi = new CalendarApi(settings);
-        return new ReminderScheduler(calendarApi, 30, settings);
+    private static ReminderScheduler startReminderServices(ApplicationActions applicationActions) throws GeneralSecurityException, IOException {
+        CalendarApi calendarApi = new CalendarApi(applicationActions.getSettings());
+        return new ReminderScheduler(calendarApi, 30, applicationActions);
     }
 
 

@@ -3,6 +3,7 @@ package se.lindhen.acr.ui.settings;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import se.lindhen.acr.ApplicationActions;
 import se.lindhen.acr.ReminderScheduler;
 import se.lindhen.acr.Settings;
 import se.lindhen.acr.ui.ScreenSelector;
@@ -24,12 +25,11 @@ import java.util.Collections;
 public class ScreenSelectorPanel extends JPanel {
 
     private final JComboBox<Screen> screenSelectorDropDown;
-    private final Settings settings;
+    private final ApplicationActions applicationActions;
 
-    public ScreenSelectorPanel(Settings settings) {
+    public ScreenSelectorPanel(ApplicationActions applicationActions) {
         super(new FlowLayout(FlowLayout.LEFT));
-
-        this.settings = settings;
+        this.applicationActions = applicationActions;
 
         setBorder(new LineBorder(Color.BLACK, 1));
 
@@ -57,7 +57,7 @@ public class ScreenSelectorPanel extends JPanel {
         }
         JComboBox<Screen> comboBox = new JComboBox<>(options.toArray(new Screen[0]));
 
-        comboBox.setSelectedItem(screenOptionFromSettingsScreen(settings.getScreen()));
+        comboBox.setSelectedItem(screenOptionFromSettingsScreen(applicationActions.getSettings().getScreen()));
 
         comboBox.addActionListener(action -> saveScreenSetting((Screen) comboBox.getSelectedItem()));
 
@@ -65,7 +65,7 @@ public class ScreenSelectorPanel extends JPanel {
     }
 
     private void saveScreenSetting(Screen screen) {
-        if (!settings.updateScreen(settingsScreenFromScreenOption(screen))) {
+        if (!applicationActions.getSettings().updateScreen(settingsScreenFromScreenOption(screen))) {
             JOptionPane.showMessageDialog(this, "Could not save settings", "Failed to save settings", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -81,11 +81,12 @@ public class ScreenSelectorPanel extends JPanel {
         if (screen != null) {
             ScreenSelector.Screen screenToPick = settingsScreenFromScreenOption(screen);
 
-            ReminderScheduler.showReminder(
+            applicationActions.showReminder(
                     Collections.singletonList(new Event()
                         .setSummary("Event summary")
                         .setStart(new EventDateTime().setDateTime(new DateTime(System.currentTimeMillis())))),
-                    screenToPick
+                    screenToPick,
+                    null
             );
         }
     }

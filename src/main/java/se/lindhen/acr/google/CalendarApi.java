@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -46,21 +48,23 @@ public class CalendarApi {
                 .build();
     }
 
+    public Duration getExpirationTime() {
+        if (auth != null) {
+            Long expiresInSeconds = auth.getCredential().getExpiresInSeconds();
+            if (expiresInSeconds != null) {
+                return Duration.of(expiresInSeconds, ChronoUnit.SECONDS);
+            }
+        }
+        return null;
+    }
+
     private <R> R execute(GoogleApiCaller<R> runner) throws IOException {
         try {
             return runner.call();
         } catch (TokenResponseException e) {
             if (e.getDetails().getError().equals(TOKEN_EXPIRED_ERROR)) {
-                if (Authorization.tryDeleteTokens()) {
-                    try {
-                        initCalendar();
-                        return execute(runner);
-                    } catch (Exception initError) {
-                        throw new RuntimeException("Failed to reinitialize calendar", initError);
-                    }
-                } else {
-                    throw new RuntimeException("Failed to delete tokens");
-                }
+                reauthenticate();
+                return execute(runner);
             } else {
                 throw e;
             }
@@ -107,6 +111,18 @@ public class CalendarApi {
         return event != null &&
                 (event.getStatus() == null || event.getStatus().equals("confirmed") || event.getStatus().equals("tentative")) &&
                 getJavaTime(event.getStart()).isEqual(time);
+    }
+
+    public void reauthenticate() {
+        if (Authorization.tryDeleteTokens()) {
+            try {
+                initCalendar();
+            } catch (Exception initError) {
+                throw new RuntimeException("Failed to reinitialize calendar", initError);
+            }
+        } else {
+            throw new RuntimeException("Failed to delete tokens");
+        }
     }
 
     private interface GoogleApiCaller<R> {
