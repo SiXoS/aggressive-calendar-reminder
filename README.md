@@ -4,8 +4,6 @@ Java 17+
 
 ## Installation
 
-Ask author to add your email to the allow-list.
-
 POSIX based installation:
 ```bash
 sudo mkdir /etc/aggressive-calendar-reminder
