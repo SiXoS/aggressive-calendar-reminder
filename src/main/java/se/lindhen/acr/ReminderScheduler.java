@@ -57,7 +57,8 @@ public class ReminderScheduler {
     public void scheduleReminder() {
         if (nextScheduledReminder == null) return;
         if (nextScheduledReminder.start().minusMinutes(calendarRefreshRateMinutes).isBefore(ZonedDateTime.now()) && nextScheduledReminder.start().isAfter(ZonedDateTime.now())) {
-            long secondsUntilReminder = Duration.between(ZonedDateTime.now(), nextScheduledReminder.start().minusMinutes(settings.getMinutesBeforeToRemind())).toSeconds();
+            int minutesBeforeToRemind = settings.getMinutesBeforeToRemind() == null ? 2 : settings.getMinutesBeforeToRemind();
+            long secondsUntilReminder = Duration.between(ZonedDateTime.now(), nextScheduledReminder.start().minusMinutes(minutesBeforeToRemind)).toSeconds();
             log.info("Scheduling " + nextScheduledReminder.events().size() + " events in " + secondsUntilReminder + " seconds");
             nextScheduledFuture = executorService.schedule(new ReminderTask(nextScheduledReminder), secondsUntilReminder, TimeUnit.SECONDS);
         }

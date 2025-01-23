@@ -1,5 +1,8 @@
 package se.lindhen.acr.ui.settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.lindhen.acr.Settings;
+import se.lindhen.acr.ui.ScreenSelector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -19,6 +22,7 @@ public class MinuteSelectorPanel extends JPanel implements DocumentListener {
     private final JTextField minuteInput;
     private final Settings settings;
     private final JLabel error;
+    private static final Logger log = LoggerFactory.getLogger(ScreenSelector.class);
 
     public MinuteSelectorPanel(Settings settings) {
         super(new FlowLayout(FlowLayout.LEFT));
@@ -70,7 +74,8 @@ public class MinuteSelectorPanel extends JPanel implements DocumentListener {
             } catch (NumberFormatException ex) {
                 error.setVisible(true);
             }
-        } catch (BadLocationException ignored) {
+        } catch (BadLocationException badLocationException) {
+            log.warn("Could not extract text", badLocationException);
         }
     }
 
